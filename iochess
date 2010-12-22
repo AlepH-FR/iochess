@@ -1,0 +1,34 @@
+#!/usr/local/bin/io
+
+// TODO : clean this
+launchPath := "/media/Data/Workspaces/veille/io/src"
+Object searchPaths := List clone append(launchPath)
+
+Object forward := method(
+    methodName := call message name
+
+    if(methodName characterAt(0) isUpperCase) then(
+
+		nameSpace := methodName split("_")
+		
+        searchPaths foreach(searchPath,
+		
+			nameSpace foreach(value
+				searchPath := searchPath .. "/" .. value
+			)
+			
+			fileName    := Path with(searchPath, ".io")
+			sourceFile  := File clone setPath(fileName)
+
+            if(sourceFile exists) then(
+                Lobby doFile(fileName)
+                return Lobby getSlot(methodName)
+           )
+       )
+    )
+
+    Exception raise("Importer: Could not find slot for " .. methodName)
+)
+
+Client_Board draw("")
+return ""
