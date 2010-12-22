@@ -1,7 +1,6 @@
 #!/usr/local/bin/io
 
-// TODO : clean this
-launchPath := "/media/Data/Workspaces/veille/io/src"
+launchPath := Directory currentWorkingDirectory
 Object searchPaths := List clone append(launchPath)
 
 Object forward := method(
