@@ -1,33 +1,36 @@
 #!/usr/local/bin/io
 
-launchPath := Directory currentWorkingDirectory
-Object searchPaths := List clone append(launchPath)
+Object searchPaths := List clone append(System launchPath .. "/src")
 
 Object forward := method(
+    
     methodName := call message name
 
-    if(methodName characterAt(0) isUpperCase) then(
+# todo : correct this condition
+#    if(methodName characterAt(0) isUpperCase,
 
 		nameSpace := methodName split("_")
 		
         searchPaths foreach(searchPath,
-		
-			nameSpace foreach(value
+
+            file := nameSpace at(nameSpace size - 1)
+            nameSpace remove(file)
+
+            nameSpace foreach(value,
 				searchPath := searchPath .. "/" .. value
 			)
-			
-			fileName    := Path with(searchPath, ".io")
-			sourceFile  := File clone setPath(fileName)
+
+            fileName    := Path with(searchPath, file .. ".io")
+            sourceFile  := File clone setPath(fileName)
 
             if(sourceFile exists) then(
                 Lobby doFile(fileName)
                 return Lobby getSlot(methodName)
            )
        )
-    )
+#    )
 
     Exception raise("Importer: Could not find slot for " .. methodName)
 )
 
-Client_Board draw("")
-return ""
+Object Client_Board draw("")
